@@ -11,3 +11,8 @@ def draw_box(win, y, x, h, w):
     
     win.vline(y + 1, x, curses.ACS_VLINE, h - 2)
     win.vline(y + 1, x + w - 1, curses.ACS_VLINE, h - 2)
+    
+def draw_box_divider(win, y, x, width):
+    win.hline(y,x+1,curses.ACS_HLINE,width-2)
+    win.addch(y,x,curses.ACS_LTEE)
+    win.addch(y,x+width-1,curses.ACS_RTEE)
