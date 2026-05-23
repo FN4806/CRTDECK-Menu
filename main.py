@@ -8,12 +8,3 @@ def main(stdscr):
     app.run()
 
 curses.wrapper(main)
-
-# from apps.weather import WeatherManager
-
-# w = WeatherManager("Swansea")
-# data = w.refresh()
-
-# for key, value in data.items():
-#     print(f"{key}: {value}")
-    

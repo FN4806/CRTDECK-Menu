@@ -261,16 +261,8 @@ class WeatherScreen(Screen):
             
     def draw(self, win):
         win.erase()
-        h, w = win.getmaxyx()
-        
-        box_h = h - 2
-        box_w = w - 2
-        
-        y = max(0, (h - box_h) // 2)
-        x = max(0, (w - box_w) // 2)
         
         weatherDesc = self.weather.data["condition"]
-        
         weather_art = get_weather_art(weatherDesc)
         
         loc = self.weather.data["location"]

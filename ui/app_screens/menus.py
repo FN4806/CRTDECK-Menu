@@ -3,6 +3,7 @@ from ui.screens import Screen
 from enum import IntFlag
 from ui.widgets import draw_box
 from ui.app_screens.weather_screen import WeatherScreen
+from ui.app_screens.dab_screen import DabScreen
 
 class MenuStyles(IntFlag):
     NONE = 0
@@ -82,9 +83,10 @@ def build_main_menu(app):
         
 def build_radio_menu(app):
     return MenuScreen(app, "Radio", [
-        ("DAB", lambda: None),
+        ("DAB", lambda: app.push(DabScreen(app))),
         ("FM", lambda: None),
         ("RTL-SDR", lambda: None),
+        ("LoRa", lambda: None),
     ], MenuStyles.BOXED | MenuStyles.CENTRED)
     
 def build_system_menu(app):
