@@ -4,6 +4,7 @@ from enum import IntFlag
 from ui.widgets import draw_box
 from ui.app_screens.weather_screen import WeatherScreen
 from ui.app_screens.dab_screen import DabScreen
+from ui.app_screens.fm_screen import FmScreen
 
 class MenuStyles(IntFlag):
     NONE = 0
@@ -84,7 +85,7 @@ def build_main_menu(app):
 def build_radio_menu(app):
     return MenuScreen(app, "Radio", [
         ("DAB", lambda: app.push(DabScreen(app))),
-        ("FM", lambda: None),
+        ("FM", lambda: app.push(FmScreen(app))),
         ("RTL-SDR", lambda: None),
         ("LoRa", lambda: None),
     ], MenuStyles.BOXED | MenuStyles.CENTRED)
