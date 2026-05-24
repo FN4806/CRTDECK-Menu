@@ -119,6 +119,22 @@ class DabManager:
 
         return self.play_station(station_name)
 
+    def get_station_list(self):
+        self.refresh_services()
+
+        stations = []
+
+        for service in self.services:
+            stations.append({
+                "stationName": service["label"]["label"].strip(),
+                "sid": service["sid"],
+                "bitrate": service["components"][0]["subchannel"]["bitrate"],
+                "channelName": self.channel,
+                "pty": service.get("ptystring", "")
+            })
+
+        return stations
+
     def get_current_service_info(self):
         if not self.current_sid:
             return None

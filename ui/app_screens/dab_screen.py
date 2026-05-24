@@ -15,6 +15,8 @@ class DabScreen(Screen):
         self.station_message = ""
         self.stream_info = ""
         
+        self.station_list = self.dab.get_station_list()
+        
     def handle_key(self, key):
         if key in (ord("b"), ord("B")):
             self.app.pop()
@@ -23,17 +25,9 @@ class DabScreen(Screen):
         elif key == curses.KEY_UP:
             self.selected = max(0, self.selected - 1)
         elif key == curses.KEY_DOWN:
-            self.selected = min(len(self.dab.station_list) - 1, self.selected + 1)
+            self.selected = min(len(self.station_list) - 1, self.selected + 1)
         elif key in (10, 13):
-            
-            if self.station == self.selected and self.playing:
-                self.playing = False
-                self.dab.stop()
-            else:
-                self.playing = True
-                self.station = self.selected
-                
-                self.dab.play_station(self.dab.station_list[self.station]["stationName"], self.dab.station_list[self.station]["channelName"])
+            self.dab.toggle_station
     
     def draw(self, win):
         win.erase()
@@ -52,7 +46,7 @@ class DabScreen(Screen):
         elif self.selected < self.top_index:
             self.top_index -= 1
             
-        visible_stations = self.dab.station_list[self.top_index:self.top_index + num_rows]
+        visible_stations = self.station_list[self.top_index:self.top_index + num_rows]
         
         for index, station in enumerate(visible_stations):
             real_index = self.top_index + index
@@ -66,8 +60,8 @@ class DabScreen(Screen):
         
         if self.playing:
             win.addstr(16,4,"You Shook Me - Led Zeppelin")
-            win.addstr(17,4,self.dab.station_list[self.station]["stationName"])
-            win.addstr(17,49,self.dab.station_list[self.station]["channelName"])
+            win.addstr(17,4,self.station_list[self.station]["stationName"])
+            win.addstr(17,49,self.station_list[self.station]["channelName"])
             win.addstr(18,4,"Example")
         
         else:
