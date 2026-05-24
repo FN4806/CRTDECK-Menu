@@ -18,12 +18,14 @@ class DabManager:
         self.current_station = None
 
     def start_welle(self):
-        print("Starting welle on channel:", self.channel)
         if self.welle_proc and self.welle_proc.poll() is None:
             return
 
+        cmd = ["welle-cli", "-c", self.channel, "-w", str(self.port)]
+        print("Running:", cmd)
+
         self.welle_proc = subprocess.Popen(
-            ["welle-cli", "-c", self.channel, "-w", str(self.port)],
+            cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -57,12 +59,16 @@ class DabManager:
         return self.welle_proc is not None and self.welle_proc.poll() is None
 
     def tune_channel(self, channel):
+        channel = channel.strip().upper()
         if self.channel == channel and self.is_welle_running():
             return
 
+        self.stop_audio()
         self.stop_welle()
+        time.sleep(0.5)
         self.channel = channel
         self.start_welle()
+        time.sleep(2.5)
 
     def play_station(self, station):
         channel = station["channelName"]
