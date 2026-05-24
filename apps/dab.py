@@ -3,6 +3,8 @@ import json
 import time
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
+import os
+import signal
 
 import logging
 
@@ -49,11 +51,11 @@ class DabManager:
         self.stop_audio()
 
         if self.welle_proc and self.welle_proc.poll() is None:
-            self.welle_proc.terminate()
+            os.killpg(os.getpgid(self.welle_proc.pid), signal.SIGTERM)
             try:
                 self.welle_proc.wait(timeout=2)
             except subprocess.TimeoutExpired:
-                self.welle_proc.kill()
+                os.killpg(os.getpgid(self.welle_proc.pid), signal.SIGKILL)
                 self.welle_proc.wait()
 
         self.welle_proc = None
