@@ -15,7 +15,9 @@ class DabScreen(Screen):
         self.station_message = ""
         self.stream_info = ""
         
-        self.station_list = self.dab.get_station_list()
+        self.station_list = []
+        
+        self.dab.start_welle()
         
     def handle_key(self, key):
         if key in (ord("b"), ord("B")):
@@ -27,9 +29,20 @@ class DabScreen(Screen):
         elif key == curses.KEY_DOWN:
             self.selected = min(len(self.station_list) - 1, self.selected + 1)
         elif key in (10, 13):
-            self.dab.toggle_station
+            if not self.station_list:
+                return
+            
+            station = self.station_list[self.selected]
+            is_playing = self.dab.toggle_station(
+                station["stationname"],
+                station["channelName"]
+            )
+            self.playing = is_playing
+            self.station = self.selected
     
     def draw(self, win):
+        self.station_list = self.dab.get_station_list()
+        
         win.erase()
         
         draw_box(win, 2, 2, 18, 52)
