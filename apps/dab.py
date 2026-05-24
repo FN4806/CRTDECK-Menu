@@ -32,7 +32,7 @@ class DabManager:
             return
 
         cmd = ["welle-cli", "-c", self.channel, "-w", str(self.port)]
-        log.debug("Running:", cmd)
+        log.debug(f"Running: {cmd}")
 
         self.welle_proc = subprocess.Popen(
             cmd,
@@ -82,12 +82,12 @@ class DabManager:
         for _ in range(10):
             data = self.get_mux_info()
             if data and data.get("services"):
-                log.debug("Locked ensemble:", data.get("ensemble", {}).get("label", {}).get("label"))
-                log.debug("SIDs:", [s.get("sid") for s in data.get("services", [])])
+                log.debug("Locked ensemble: %s", data.get("ensemble", {}).get("label", {}).get("label"))
+                log.debug("SIDs: %s", [s.get("sid") for s in data.get("services", [])])
                 return
             time.sleep(0.5)
 
-        log.debug("No services found on", self.channel)
+        log.debug(f"No services found on {self.channel}")
         
         time.sleep(2.5)
 
