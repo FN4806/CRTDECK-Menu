@@ -85,11 +85,12 @@ class DabScreen(Screen):
                 protection = info.get("protection", "?")
                 snr = info.get("snr", "?")
                 dls = info.get("dls", "")
+                aac_err = info.get("aac_errors", "?")
 
                 win.addstr(16, 4, dls[:48] if dls else "No DLS text")
                 win.addstr(17, 4, self.station_list[self.station]["stationName"])
                 win.addstr(17, 49, self.station_list[self.station]["channelName"])
-                win.addstr(18, 4, f"{bitrate} kbps {codec} {protection} Signal:{snr}"[:48])
+                win.addstr(18, 4, f"{bitrate} kbps  {codec}  {protection}  Signal: {snr} dB  Errs: {aac_err}"[:48])
         
         else:
             win.addstr(17,4,"        Press Enter to Select a Station")
