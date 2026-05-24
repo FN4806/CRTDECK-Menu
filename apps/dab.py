@@ -162,6 +162,17 @@ class DabManager:
         for service in data.get("services", []):
             service_sid = self.normalise_sid(service.get("sid"))
             if service_sid == self.current_sid:
+                
+                dls = service.get("dls") or {}
+                audiolevel = service.get("audiolevel") or {}
+                errorcounters = service.get("errorcounters") or {}
+                demodulator = data.get("demodulator") or {}
+                fic = demodulator.get("fic") or {}
+                ensemble = data.get("ensemble") or {}
+                ensemble_label = ensemble.get("label") or {}
+                receiver = data.get("receiver") or {}
+                hardware = receiver.get("hardware") or {}
+                
                 return {
                     "station": service["label"]["label"].strip(),
                     "shortlabel": service["label"]["shortlabel"].strip(),
@@ -170,17 +181,17 @@ class DabManager:
                     "protection": service["components"][0]["subchannel"]["protection"],
                     "codec": service["components"][0]["ascty"],
                     "pty": service.get("ptystring", ""),
-                    "dls": service.get("dls", {}).get("label", ""),
-                    "audio_left": service.get("audiolevel", {}).get("left", -1),
-                    "audio_right": service.get("audiolevel", {}).get("right", -1),
-                    "frame_errors": service.get("errorcounters", {}).get("frameerrors", 0),
-                    "rs_errors": service.get("errorcounters", {}).get("rserrors", 0),
-                    "aac_errors": service.get("errorcounters", {}).get("aacerrors", 0),
-                    "snr": data.get("demodulator", {}).get("snr"),
-                    "frequency_correction": data.get("demodulator", {}).get("frequencycorrection"),
-                    "fic_crc_errors": data.get("demodulator", {}).get("fic", {}).get("numcrcerrors"),
-                    "ensemble": data.get("ensemble", {}).get("label", {}).get("label", ""),
-                    "gain": data.get("receiver", {}).get("hardware", {}).get("gain"),
+                    "dls": dls.get("label", ""),
+                    "audio_left": audiolevel.get("left", -1),
+                    "audio_right": audiolevel.get("right", -1),
+                    "frame_errors": errorcounters.get("frameerrors", 0),
+                    "rs_errors": errorcounters.get("rserrors", 0),
+                    "aac_errors": errorcounters.get("aacerrors", 0),
+                    "snr": demodulator.get("snr"),
+                    "frequency_correction": demodulator.get("frequencycorrection"),
+                    "fic_crc_errors": fic.get("numcrcerrors"),
+                    "ensemble": ensemble_label.get("label", ""),
+                    "gain": hardware.get("gain"),
                 }
 
         return None
