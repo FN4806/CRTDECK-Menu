@@ -15,7 +15,7 @@ class DabScreen(Screen):
         self.station_message = ""
         self.stream_info = ""
         
-        self.station_list = []
+        self.station_list = self.dab.get_station_list()
         
         self.dab.start_welle()
         
@@ -33,15 +33,11 @@ class DabScreen(Screen):
                 return
             
             station = self.station_list[self.selected]
-            is_playing = self.dab.toggle_station(
-                station["stationname"],
-                station["channelName"]
-            )
+            is_playing = self.dab.toggle_station(station)
             self.playing = is_playing
             self.station = self.selected
     
     def draw(self, win):
-        self.station_list = self.dab.get_station_list()
         
         win.erase()
         

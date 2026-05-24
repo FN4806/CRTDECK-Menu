@@ -52,51 +52,38 @@ class DabManager:
         except (URLError, HTTPError, TimeoutError, json.JSONDecodeError):
             return None
 
-    def refresh_services(self):
-        data = self.get_mux_info()
-        if not data:
-            return []
+    def is_welle_running(self):
+        return self.welle_proc is not None and self.welle_proc.poll() is None
 
-        self.services = data.get("services", [])
-        return self.services
+    def tune_channel(self, channel):
+        if self.channel == channel and self.is_welle_running():
+            return
 
-    def find_service_by_name(self, station_name):
-        self.refresh_services()
-
-        wanted = station_name.strip().lower()
-
-        for service in self.services:
-            label = service["label"]["label"].strip().lower()
-            shortlabel = service["label"]["shortlabel"].strip().lower()
-
-            if wanted in (label, shortlabel):
-                return service
-
-        return None
-
-    def play_station(self, station_name):
+        self.stop_welle()
+        self.channel = channel
         self.start_welle()
 
-        service = self.find_service_by_name(station_name)
-        if not service:
-            return False
-
-        sid = service["sid"]
-        url_mp3 = service.get("url_mp3", f"/mp3/{sid}")
-        stream_url = f"{self.base_url}{url_mp3}"
-
-        self.stop_audio()
-
+    def play_station(self, station):
+        channel = station["channelName"]
+        sid = station["stationSId"]
+        
+        if self.channel != channel or not self.is_welle_running():
+            self.stop_audio()
+            self.tune_channel(channel)
+        else:
+            self.stop_audio()
+            
+        stream_url = f"{self.base_url}/mp3/{sid}"
+        
         self.audio_proc = subprocess.Popen(
-            ["mpg123", "-q", stream_url],
+            ["mpv", stream_url],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-
+        
         self.current_sid = sid
-        self.current_station = service["label"]["label"].strip()
-
+        self.current_station = station["stationName"]
         return True
 
     def stop_audio(self):
@@ -112,26 +99,20 @@ class DabManager:
         self.current_sid = None
         self.current_station = None
 
-    def toggle_station(self, station_name):
-        if self.current_station and self.current_station.strip().lower() == station_name.strip().lower():
+    def toggle_station(self, station):
+        station_name = station["stationName"]
+        sid = station["stationSId"]
+
+        if self.current_sid == sid:
             self.stop_audio()
             return False
 
-        return self.play_station(station_name)
+        return self.play_station(station)
 
     def get_station_list(self):
-        self.refresh_services()
-
-        stations = []
-
-        for service in self.services:
-            stations.append({
-                "stationName": service["label"]["label"].strip(),
-                "sid": service["sid"],
-                "bitrate": service["components"][0]["subchannel"]["bitrate"],
-                "channelName": self.channel,
-                "pty": service.get("ptystring", "")
-            })
+        
+        with open('data/stations.json', 'r') as f:
+            stations = json.load(f)
 
         return stations
 
