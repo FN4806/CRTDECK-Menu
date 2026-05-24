@@ -65,7 +65,7 @@ class DabManager:
 
     def play_station(self, station):
         channel = station["channelName"]
-        sid = station["stationSId"]
+        sid = self.normalise_sid(station["stationSId"])
         
         if self.channel != channel or not self.is_welle_running():
             self.stop_audio()
@@ -85,6 +85,14 @@ class DabManager:
         self.current_sid = sid
         self.current_station = station["stationName"]
         return True
+
+    def normalise_sid(self, sid):
+        if isinstance(sid, str):
+            sid = sid.strip()
+            if sid.lower().startswith("0x"):
+                return int(sid, 16)
+            return int(sid)
+        return int(sid)
 
     def stop_audio(self):
         if self.audio_proc and self.audio_proc.poll() is None:
@@ -125,7 +133,8 @@ class DabManager:
             return None
 
         for service in data.get("services", []):
-            if service.get("sid") == self.current_sid:
+            service_sid = self.normalise_sid(service.get("sid"))
+            if service_sid == self.current_sid:
                 return {
                     "station": service["label"]["label"].strip(),
                     "shortlabel": service["label"]["shortlabel"].strip(),
