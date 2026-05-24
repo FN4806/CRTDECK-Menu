@@ -68,10 +68,12 @@ class DabScreen(Screen):
         win.addstr(15,4,"[CURRENTLY PLAYING]", curses.A_BOLD)
         
         if self.playing:
-            win.addstr(16,4,"You Shook Me - Led Zeppelin")
+            info = self.dab.get_current_service_info()
+            
+            win.addstr(16,4,info["dls"])
             win.addstr(17,4,self.station_list[self.station]["stationName"])
             win.addstr(17,49,self.station_list[self.station]["channelName"])
-            win.addstr(18,4,"Example")
+            win.addstr(18,4,f"{info["bitrate"]} kbps {info["codec"]} {info["protection"]}  Signal:{info["snr"]}")
         
         else:
             win.addstr(17,4,"        Press Enter to Select a Station")
