@@ -68,6 +68,17 @@ class DabManager:
         time.sleep(0.5)
         self.channel = channel
         self.start_welle()
+        
+        for _ in range(10):
+            data = self.get_mux_info()
+            if data and data.get("services"):
+                print("Locked ensemble:", data.get("ensemble", {}).get("label", {}).get("label"))
+                print("SIDs:", [s.get("sid") for s in data.get("services", [])])
+                return
+            time.sleep(0.5)
+
+        print("No services found on", self.channel)
+        
         time.sleep(2.5)
 
     def play_station(self, station):
