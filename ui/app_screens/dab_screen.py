@@ -70,18 +70,22 @@ class DabScreen(Screen):
         if self.playing:
             info = self.dab.get_current_service_info()
             
-            if info:
-                bitrate = info["bitrate"]
-                codec = info["codec"]
-                protection = info["protection"]
-                snr = info["snr"]
-
-                win.addstr(16,4, info["dls"][:48])
-                win.addstr(17,4, self.station_list[self.station]["stationName"])
-                win.addstr(17,49, self.station_list[self.station]["channelName"])
-                win.addstr(18,4, f"{bitrate} kbps {codec} {protection} Signal:{snr}")
+            if info is None:
+                win.addstr(16, 4, "Loading station info...")
+                win.addstr(17, 4, self.station_list[self.station]["stationName"])
+                win.addstr(17, 49, self.station_list[self.station]["channelName"])
+                win.addstr(18, 4, "Waiting for mux metadata...")
             else:
-                win.addstr(16,4, "Loading station info...")
+                bitrate = info.get("bitrate", "?")
+                codec = info.get("codec", "?")
+                protection = info.get("protection", "?")
+                snr = info.get("snr", "?")
+                dls = info.get("dls", "")
+
+                win.addstr(16, 4, dls[:48] if dls else "No DLS text")
+                win.addstr(17, 4, self.station_list[self.station]["stationName"])
+                win.addstr(17, 49, self.station_list[self.station]["channelName"])
+                win.addstr(18, 4, f"{bitrate} kbps {codec} {protection} Signal:{snr}"[:48])
         
         else:
             win.addstr(17,4,"        Press Enter to Select a Station")

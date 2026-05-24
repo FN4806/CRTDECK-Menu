@@ -26,6 +26,7 @@ class App:
     
     def run(self):
         curses.curs_set(0)
+        self.stdscr.timeout(250)
         self.stdscr.keypad(True)
         
         while self.running:
