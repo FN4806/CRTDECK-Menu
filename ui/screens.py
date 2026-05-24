@@ -1,6 +1,7 @@
 import curses
 import time
 from apps.weather import WeatherManager
+from apps.dab import DabManager
 
 class App:
     def __init__(self, stdscr):
@@ -8,6 +9,7 @@ class App:
         self.running = True
         self.screens = []
         self.weather = WeatherManager("Llansamlet")
+        self.dab = DabManager()
         
     def push(self, screen):
         self.screens.append(screen)
