@@ -18,6 +18,7 @@ class DabManager:
         self.current_station = None
 
     def start_welle(self):
+        print("Starting welle on channel:", self.channel)
         if self.welle_proc and self.welle_proc.poll() is None:
             return
 
