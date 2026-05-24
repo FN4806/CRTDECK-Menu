@@ -5,7 +5,7 @@ from ui.widgets import draw_box, draw_box_divider
 class FmScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
-        self.frequency = 104
+        self.frequency = 88
         
     def handle_key(self, key):
         if key in (ord("b"), ord("B")):
