@@ -21,8 +21,12 @@ class DabScreen(Screen):
         
     def handle_key(self, key):
         if key in (ord("b"), ord("B")):
+            self.dab.stop_welle()
+            self.dab.stop_audio()
             self.app.pop()
         elif key in (ord("q"), ord("Q")):
+            self.dab.stop_welle()
+            self.dab.stop_audio()
             self.app.home()
         elif key == curses.KEY_UP:
             self.selected = max(0, self.selected - 1)
