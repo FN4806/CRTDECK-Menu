@@ -70,15 +70,18 @@ class DabScreen(Screen):
         if self.playing:
             info = self.dab.get_current_service_info()
             
-            bitrate = info["bitrate"]
-            codec = info["codec"]
-            protection = info["protection"]
-            snr = info["snr"]
-            
-            win.addstr(16,4,info["dls"])
-            win.addstr(17,4,self.station_list[self.station]["stationName"])
-            win.addstr(17,49,self.station_list[self.station]["channelName"])
-            win.addstr(18,4,f"{bitrate} kbps {codec} {protection}  Signal:{snr}")
+            if info:
+                bitrate = info["bitrate"]
+                codec = info["codec"]
+                protection = info["protection"]
+                snr = info["snr"]
+
+                win.addstr(16,4, info["dls"][:48])
+                win.addstr(17,4, self.station_list[self.station]["stationName"])
+                win.addstr(17,49, self.station_list[self.station]["channelName"])
+                win.addstr(18,4, f"{bitrate} kbps {codec} {protection} Signal:{snr}")
+            else:
+                win.addstr(16,4, "Loading station info...")
         
         else:
             win.addstr(17,4,"        Press Enter to Select a Station")
