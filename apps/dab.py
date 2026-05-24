@@ -74,11 +74,9 @@ class DabManager:
         channel = station["channelName"]
         sid = self.normalise_sid(station["stationSId"])
         
-        if self.channel != channel or not self.is_welle_running():
-            self.stop_audio()
-            self.tune_channel(channel)
-        else:
-            self.stop_audio()
+        self.tune_channel(channel)
+        
+        self.stop_audio()
             
         stream_url = f"{self.base_url}/mp3/{sid}"
         
@@ -115,8 +113,7 @@ class DabManager:
         self.current_station = None
 
     def toggle_station(self, station):
-        station_name = station["stationName"]
-        sid = station["stationSId"]
+        sid = self.normalise_sid(station["stationSId"])
 
         if self.current_sid == sid:
             self.stop_audio()
