@@ -4,6 +4,16 @@ import time
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 
+import logging
+
+logging.basicConfig(
+    filename="dab_debug.log",
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s: %(message)s"
+)
+
+log = logging.getLogger("dab")
+
 class DabManager:
     def __init__(self, channel="12A", port=8000):
         self.channel = channel
@@ -22,7 +32,7 @@ class DabManager:
             return
 
         cmd = ["welle-cli", "-c", self.channel, "-w", str(self.port)]
-        print("Running:", cmd)
+        log.debug("Running:", cmd)
 
         self.welle_proc = subprocess.Popen(
             cmd,
@@ -72,12 +82,12 @@ class DabManager:
         for _ in range(10):
             data = self.get_mux_info()
             if data and data.get("services"):
-                print("Locked ensemble:", data.get("ensemble", {}).get("label", {}).get("label"))
-                print("SIDs:", [s.get("sid") for s in data.get("services", [])])
+                log.debug("Locked ensemble:", data.get("ensemble", {}).get("label", {}).get("label"))
+                log.debug("SIDs:", [s.get("sid") for s in data.get("services", [])])
                 return
             time.sleep(0.5)
 
-        print("No services found on", self.channel)
+        log.debug("No services found on", self.channel)
         
         time.sleep(2.5)
 
